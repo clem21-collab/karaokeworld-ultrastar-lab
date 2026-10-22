@@ -1,9 +1,9 @@
-<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KaraokeWorld UltraStar Party V3</title>
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>KaraokeWorld UltraStar Party V3.1</title>
 <style>:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#0b0d13;color:#fff;font-family:system-ui,-apple-system,Segoe UI,sans-serif}.w{max-width:1250px;margin:auto;padding:28px}.muted{color:#a8abb7}.hero{display:flex;justify-content:space-between;gap:20px;align-items:center;flex-wrap:wrap}.pill{padding:7px 11px;border-radius:999px;background:#173923;color:#8ff0aa}.panel{background:#131620;border:1px solid #292e3e;border-radius:20px;padding:18px;margin:20px 0}.bar{display:flex;gap:10px;flex-wrap:wrap}input,button{background:#191c27;color:#fff;border:1px solid #363b4e;border-radius:13px;padding:12px;font:inherit}input[type=search]{flex:1;min-width:250px}button{font-weight:700;cursor:pointer}.stats{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0}.stat{background:#171a24;border-radius:14px;padding:10px 13px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}.card{background:#131620;border:1px solid #292e3e;border-radius:17px;padding:16px}.card h3{margin:0 0 4px}.green{color:#8ff0aa}.yellow{color:#ffe48a}.red{color:#ff9a9a}.player{display:none;text-align:center;background:#07080c;border:1px solid #303547;border-radius:22px;padding:24px;margin-top:20px}.line{font-size:clamp(28px,5vw,58px);font-weight:800;min-height:1.5em}.next{font-size:clamp(18px,3vw,30px);color:#777;min-height:1.5em;margin-top:12px}.syl{color:#666a74;white-space:pre-wrap}.syl.done,.syl.active{color:#fff}.syl.active{text-shadow:0 0 16px #fff8}audio{width:min(760px,100%);margin-top:18px}
 .queuebox{margin-top:20px}.qitem{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px;border-bottom:1px solid #292e3e}
 .qitem:last-child{border-bottom:0}.actions{display:flex;gap:7px;flex-wrap:wrap}.star{font-size:20px}.partybar{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
 </style></head>
-<body><main class="w"><div class="hero"><div><h1>🎤 KaraokeWorld UltraStar Party V3</h1><div class="muted">Bibliothèque soirée · import massif · favoris · file d'attente</div></div><div class="pill">Moteur BPM + GAP · 0 offset</div></div>
+<body><main class="w"><div class="hero"><div><h1>🎤 KaraokeWorld UltraStar Party V3.1</h1><div class="muted">Bibliothèque soirée · import massif · favoris · file d'attente</div></div><div class="pill">Moteur BPM + GAP · 0 offset</div></div>
 <div class="panel"><h2>1. Importer toute ta bibliothèque</h2><p>Choisis le <b>dossier parent</b> contenant tes dossiers de chansons. Chrome lit les TXT et repère automatiquement leur MP3/OGG exact.</p>
 <input id="folder" type="file" webkitdirectory multiple><div id="importmsg" class="muted" style="margin-top:10px">Aucun dossier chargé.</div>
 <div class="stats"><div class="stat">📚 <b id="ncat">0</b> références catalogue</div><div class="stat">🟢 <b id="nready">0</b> chansons prêtes</div><div class="stat">🟡 <b id="nmissing">0</b> sans audio exact</div></div></div>
@@ -12,7 +12,10 @@
 <div id="grid" class="grid"></div>
 <section id="player" class="player"><h2 id="now"></h2><div id="meta" class="muted"></div><div style="min-height:210px;display:flex;flex-direction:column;justify-content:center"><div id="line" class="line"></div><div id="next" class="next"></div></div><audio id="audio" controls></audio></section>
 </main><script>
-const $=x=>document.getElementById(x);let seed=[],lib=[],groups=[],raf=0;
+const $=x=>document.getElementById(x);
+let seed=[],lib=[],groups=[],raf=0;
+let queue=[],onlyFav=false;
+let favs=new Set(JSON.parse(localStorage.getItem('kw_ultra_party_favs')||'[]'));
 fetch('./catalog-fr.json').then(r=>r.json()).then(x=>{seed=x;$('ncat').textContent='1 110*';render()});
 function norm(s){return (s||'').normalize('NFD').replace(/\p{Diacritic}/gu,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()}
 function dec(buf){for(const e of ['utf-8','windows-1252','iso-8859-1'])try{return new TextDecoder(e,{fatal:e==='utf-8'}).decode(buf)}catch{}return new TextDecoder().decode(buf)}
